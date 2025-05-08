@@ -2,153 +2,104 @@
 
 ## Domain Proyek
 
-Permasalahan dropout mahasiswa masih menjadi tantangan serius di berbagai institusi pendidikan tinggi. Tingkat kelulusan yang rendah tidak hanya mencerminkan efektivitas sistem pembelajaran, tetapi juga berdampak pada reputasi institusi dan beban biaya yang ditanggung mahasiswa serta keluarganya. Menurut laporan World Bank (2021), satu dari lima mahasiswa di negara berkembang berisiko tidak menyelesaikan studi tepat waktu, atau bahkan putus kuliah sebelum meraih gelar [1].
+Permasalahan dalam menemukan anime yang sesuai dengan preferensi individu masih menjadi tantangan di berbagai platform streaming dan komunitas penggemar anime. Banyaknya judul yang tersedia, genre yang beragam, serta perbedaan selera pengguna membuat proses pencarian anime yang cocok seringkali memakan waktu dan tidak efisien. Berdasarkan laporan MyAnimeList (2021), rata-rata pengguna menghabiskan lebih dari 30 menit hanya untuk memilih anime yang ingin ditonton, terutama di musim rilis baru yang penuh pilihan [1].
 
-Masalah ini sangat kompleks karena dipengaruhi oleh kombinasi faktor akademik dan non-akademik, termasuk latar belakang keluarga, kondisi ekonomi, kinerja akademik, serta faktor psikososial. Oleh karena itu, pendekatan prediktif berbasis data sangat dibutuhkan untuk membantu institusi pendidikan dalam melakukan deteksi dini terhadap mahasiswa yang berpotensi mengalami kegagalan studi.
+Masalah ini bersifat kompleks karena dipengaruhi oleh preferensi personal yang unik dari setiap pengguna, seperti genre favorit, gaya animasi yang disukai, tema cerita, hingga rating dan popularitas. Oleh karena itu, dibutuhkan pendekatan berbasis data untuk membantu pengguna menemukan rekomendasi anime yang relevan dan personalisasi dengan lebih cepat dan akurat.
 
-Dalam proyek ini, dibangun sebuah sistem klasifikasi berbasis machine learning yang memanfaatkan algoritma XGBoost Classifier. XGBoost dikenal sebagai salah satu algoritma klasifikasi berbasis ensemble yang sangat efisien dan memiliki akurasi tinggi dalam banyak kasus prediktif. Model ini dilatih menggunakan dataset yang berisi 37 fitur, di antaranya: status pernikahan, usia saat masuk kuliah, gender, nilai ujian, jumlah mata kuliah yang diambil dan disetujui, hingga indikator ekonomi seperti inflasi dan PDB. Label target dari data ini diklasifikasikan menjadi dua kelas utama: dropout dan graduate success.
+Dalam proyek ini, dibangun sebuah sistem rekomendasi anime menggunakan metode Content-Based Filtering. Pendekatan ini bekerja dengan cara menganalisis fitur-fitur dari anime yang pernah ditonton atau disukai pengguna, seperti genre, tipe penayangan, jumlah episode, jumlah member komunitas, dan skor rating, untuk merekomendasikan anime lain dengan karakteristik serupa. Model ini memanfaatkan vectorization dari data teks (judul dan tag genre) menggunakan teknik seperti TF-IDF, serta menghitung kemiripan antar konten menggunakan metrik seperti cosine similarity.
 
-Tujuan utama dari sistem ini adalah untuk mengklasifikasikan mahasiswa berdasarkan kemungkinan mereka mengalami dropout atau berhasil menyelesaikan studinya. Dengan sistem ini, pihak kampus dapat mengidentifikasi kelompok risiko lebih awal dan menyusun strategi intervensi yang lebih efektif, seperti pendampingan akademik, beasiswa tambahan, atau konseling psikologis.
+Tujuan utama dari sistem ini adalah untuk merekomendasikan anime yang paling sesuai dengan selera pengguna berdasarkan konten yang telah mereka nikmati sebelumnya. Dengan sistem ini, platform streaming atau aplikasi anime tracker dapat memberikan saran tayangan yang lebih akurat dan meningkatkan kepuasan pengguna dalam eksplorasi anime.
 
-Beberapa penelitian terdahulu juga telah membuktikan efektivitas model klasifikasi dalam kasus serupa. Penelitian oleh Castro et al. (2020) menggunakan XGBoost untuk memprediksi dropout dan berhasil mencapai akurasi lebih dari 90% [2]. Studi lain oleh Umer et al. (2022) menekankan bahwa faktor akademik semester awal, seperti jumlah evaluasi dan nilai mata kuliah, sangat berkontribusi dalam model prediktif [3].
+Beberapa penelitian terdahulu juga telah menunjukkan efektivitas sistem rekomendasi berbasis konten dalam domain hiburan. Penelitian oleh Lops et al. (2019) menunjukkan bahwa content-based filtering efektif dalam memberikan rekomendasi yang konsisten terhadap preferensi pengguna [2]. Studi lain oleh Iqbal et al. (2021) menyatakan bahwa sinopsis dan tag genre menjadi fitur paling relevan dalam sistem rekomendasi anime yang personalisasi [3].
 
-Dengan pendekatan ini, diharapkan sistem prediksi berbasis machine learning dapat menjadi alat bantu pengambilan keputusan yang berdampak nyata dalam meningkatkan kualitas pendidikan tinggi dan mengurangi angka kegagalan studi khususnya di Indonesia.
+Dengan pendekatan ini, diharapkan sistem rekomendasi anime berbasis content-based filtering dapat menjadi solusi praktis bagi penggemar anime dalam menemukan tontonan yang sesuai, mengurangi waktu pencarian, dan meningkatkan pengalaman menikmati anime secara keseluruhan.
 
 ## Business Understanding
 
-Dalam dunia pendidikan tinggi, menjaga tingkat retensi mahasiswa merupakan tantangan utama yang harus dihadapi oleh institusi akademik. Tingginya angka mahasiswa yang mengalami dropout atau tidak menyelesaikan studi tepat waktu dapat berdampak buruk terhadap reputasi universitas, efisiensi pengelolaan sumber daya, dan masa depan akademik mahasiswa itu sendiri. Untuk itu, dibutuhkan sebuah sistem yang mampu mengidentifikasi mahasiswa yang berisiko tinggi agar dapat diberikan intervensi sedini mungkin.
+Dalam industri hiburan, khususnya dunia anime, memberikan pengalaman menonton yang personal dan memuaskan kepada pengguna merupakan tantangan utama bagi platform penyedia layanan streaming dan komunitas penggemar. Banyaknya pilihan judul anime yang tersedia justru dapat membuat pengguna kesulitan dalam menemukan tontonan yang sesuai dengan preferensi mereka, yang berujung pada kebingungan atau bahkan kehilangan minat untuk menonton.
+
+Untuk mengatasi masalah tersebut, dibutuhkan sebuah sistem yang mampu memahami selera pengguna berdasarkan konten anime yang pernah mereka tonton atau sukai. Dengan menyediakan rekomendasi yang relevan dan personal, platform tidak hanya meningkatkan kepuasan pengguna, tetapi juga dapat memperpanjang durasi keterlibatan (engagement) dan loyalitas pengguna terhadap layanan. Sistem ini juga berperan penting dalam membantu pengguna mengeksplorasi lebih banyak judul anime yang mungkin tidak populer, namun memiliki kualitas konten yang sesuai dengan minat mereka.
 
 ### Problem Statements
 
-1. Bagaimana cara mengidentifikasi mahasiswa yang berpotensi mengalami dropout berdasarkan data historis yang tersedia?
-   - Banyak institusi kesulitan dalam melakukan prediksi dropout karena kurangnya alat prediktif yang mampu menangkap berbagai faktor kompleks seperti prestasi akademik, kondisi sosial ekonomi, dan faktor pribadi lainnya.
+1. Bagaimana mengurangi waktu yang dihabiskan pengguna dalam memilih anime yang sesuai dengan preferensi mereka?
 
-2. Bagaimana meningkatkan kualitas layanan akademik dengan pemanfaatan data secara efektif?
-   - Informasi yang tersebar di berbagai sistem informasi akademik sering kali belum digunakan secara optimal untuk mendukung pengambilan keputusan yang berbasis data.
+   Banyak pengguna merasa kesulitan dan menghabiskan waktu lama untuk menemukan tontonan yang cocok karena banyaknya pilihan dan kurangnya rekomendasi yang personal.
 
-3. Apa saja fitur yang paling berpengaruh terhadap keberhasilan studi mahasiswa?
-   - Memahami fitur penting akan membantu universitas dalam merancang program intervensi yang lebih tepat sasaran, seperti pemberian beasiswa, konseling, atau penyesuaian kurikulum.
+2. Mengapa sistem rekomendasi yang ada seringkali tidak sesuai dengan selera pengguna?
+
+   Sistem rekomendasi seringkali terlalu bergantung pada popularitas atau riwayat global tanpa memahami karakteristik konten seperti genre dan judul.
+
+3. Bagaimana cara memanfaatkan fitur konten anime (judul dan genre) secara optimal dalam membangun sistem rekomendasi yang akurat?
+
+   Tanpa teknik pemrosesan teks dan pengukuran kesamaan yang tepat, fitur-fitur ini belum dimanfaatkan secara maksimal.
 
 ### Goals
 
-1. Membangun model prediksi dropout mahasiswa menggunakan algoritma machine learning berbasis XGBoost.
-   - Model ini akan dilatih menggunakan data yang mencakup aspek akademik dan non-akademik mahasiswa dengan target prediksi berupa status kelulusan.
-
-2. Memberikan sistem klasifikasi yang dapat diintegrasikan ke dalam sistem pengelolaan akademik untuk mendukung intervensi dini.
-   - Output dari model prediksi dapat digunakan oleh dosen pembimbing, bagian kemahasiswaan, atau pusat layanan akademik sebagai dasar tindakan.
-
-3. Mengidentifikasi fitur-fitur penting (feature importance) dalam menentukan keberhasilan studi mahasiswa.
-   - Hasil analisis feature importance dari model XGBoost dapat dimanfaatkan untuk menyusun kebijakan atau program pendukung mahasiswa yang lebih efektif.
+1. Membangun sistem rekomendasi anime berbasis Content-Based Filtering yang menggunakan judul dan genre sebagai fitur utama.
+2. Memberikan rekomendasi anime yang relevan dan personal berdasarkan kesamaan konten.
+3. Mengurangi waktu pencarian pengguna dalam memilih tontonan.
+4. Membantu pengguna mengeksplorasi anime yang belum populer namun sesuai selera.
+5. Meningkatkan keterlibatan dan kepuasan pengguna terhadap platform.
 
 ### Solution statements
 
-1. Menggunakan algoritma XGBoost Classifier sebagai baseline model prediktif.
-   - XGBoost dikenal karena keunggulannya dalam menangani data tabular, akurasi yang tinggi, serta interpretabilitas terhadap kontribusi fitur melalui feature importance. Model akan dievaluasi menggunakan metrik seperti accuracy, precision, recall, dan F1-score.
-
-2. Mengevaluasi dan membandingkan hasil prediksi dengan algoritma alternatif seperti Random Forest dan Logistic Regression.
-   - Dengan membandingkan performa beberapa model, kita dapat memastikan bahwa solusi terbaik telah dipilih untuk diadopsi dalam praktek nyata.
+1. Mengembangkan pipeline ekstraksi fitur dari kolom title dan genre menggunakan teknik TF-IDF vectorization.
+2. Membangun vektor representasi teks dari setiap anime dan menghitung kemiripan antar-anime menggunakan cosine similarity.
+3. Menyediakan sistem rekomendasi yang mampu memberikan daftar anime serupa berdasarkan judul dan genre input dari pengguna.
+4. Menguji kualitas rekomendasi melalui uji coba dengan pengguna dan validasi subjektif berbasis kesesuaian preferensi.
 
 ## Data Understanding
 
-Dataset yang digunakan dalam proyek ini berasal dari Kaggle, yaitu [Student Dropout and Academic Success](https://www.kaggle.com/datasets/adilshamim8/predict-students-dropout-and-academic-success). Dataset ini dikembangkan sebagai bagian dari proyek nasional di Portugal yang bertujuan untuk mengurangi angka dropout dan kegagalan akademik di institusi pendidikan tinggi.
+Dataset yang digunakan dalam proyek ini berasal dari [Anime Recommendation Database di Kaggle](https://www.kaggle.com/datasets/CooperUnion/anime-recommendations-database/data). Dataset ini memuat data preferensi pengguna terhadap berbagai judul anime, yang diambil dari situs populer MyAnimeList. Tujuan utama dari dataset ini adalah mendukung pembangunan sistem rekomendasi anime yang lebih personal, berdasarkan preferensi nyata pengguna terhadap ribuan judul anime yang tersedia. Dataset ini terdiri dari dua file utama: `anime.csv` dan `rating.csv`.
 
-Dataset ini berisi informasi lengkap mengenai 4.424 mahasiswa dari 8 program studi yang berbeda, seperti Agronomi, Desain, Pendidikan, Keperawatan, Jurnalisme, Manajemen, Pelayanan Sosial, dan Teknologi. Tujuan utama dari dataset ini adalah untuk mendukung sistem intervensi dini dengan memprediksi kemungkinan hasil akademik mahasiswa, yaitu:
+### Data
 
-- Dropout (Berhenti Studi)
-- Enrolled (Masih Terdaftar)
-- Graduate (Lulus)
+1. anime.csv
 
-Masalah ini diformulasikan sebagai klasifikasi tiga kelas (multiclass classification) dengan tantangan ketidakseimbangan kelas (class imbalance), menjadikannya skenario yang realistis untuk penerapan machine learning di bidang edukasi.
+Berisi metadata dari 12.294 anime, mencakup berbagai informasi penting seperti:
+- anime_id: ID unik dari setiap anime (mengacu pada ID dari myanimelist.net)
+- name: Judul lengkap anime
+- genre: Daftar genre yang dimiliki setiap anime, dipisahkan dengan koma (contoh: Action, Adventure, Comedy)
+- type: Tipe anime (contoh: TV, Movie, OVA, dll.)
+- episodes: Jumlah episode anime (1 jika berupa film)
+- rating: Rata-rata rating dari komunitas pengguna (skala 1–10)
+- members: Jumlah pengguna yang menambahkan anime tersebut ke daftar mereka
 
-Ringkasan Dataset:
-- Jumlah Observasi (Rows): 4.424 mahasiswa
-- Jumlah Fitur (Columns): 37 kolom, terdiri dari 36 fitur input dan 1 fitur target
-- Jenis Data: Numerik (integer & float) dan kategorikal
-- Fitur Target: 'Target' (kategori: Dropout, Enrolled, Graduate)
+2. rating.csv
 
-### Variabel-variabel pada Student Dropout and Academic Success:
-
-1. Demografis & Sosial Ekonomi
-   - Marital status: Status pernikahan mahasiswa
-   - Application mode: Mode pendaftaran mahasiswa ke universitas
-   - Application order: Urutan pilihan program studi saat mendaftar
-   - Course: Program studi mahasiswa
-   - Daytime/evening attendance: Jadwal kuliah (pagi/sore)
-   - Previous qualification: Pendidikan terakhir sebelum masuk universitas
-   - Previous qualification grade: Nilai pendidikan sebelumnya (0–200)
-   - Nationality: Kewarganegaraan
-   - Mother's qualification: Pendidikan terakhir ibu
-   - Father's qualification: Pendidikan terakhir ayah
-   - Mother's occupation: Pekerjaan ibu
-   - Father's occupation: Pekerjaan ayah
-   - Displaced: Apakah mahasiswa berasal dari luar kota/tempat tinggal utama
-   - Educational special needs: Apakah mahasiswa memiliki kebutuhan khusus
-   - Debtor: Apakah mahasiswa memiliki utang akademik
-   - Tuition fees up to date: Apakah pembayaran kuliah lancar
-   - Gender: Jenis kelamin
-   - Scholarship holder: Penerima beasiswa
-   - Age at enrollment: Usia saat mendaftar kuliah
-   - International: Apakah mahasiswa merupakan mahasiswa internasional
-
-2. Riwayat Akademik
-   - Curricular units 1st sem (credited, enrolled, evaluated, approved, grade, without evaluations): Informasi akademik semester 1
-   - Curricular units 2nd sem (credited, enrolled, evaluated, approved, grade, without evaluations): Informasi akademik semester 2
-   - Unemployment rate: Tingkat pengangguran saat tahun masuk kuliah
-   - Inflation rate: Tingkat inflasi saat tahun masuk kuliah
-   - GDP: Produk domestik bruto saat tahun masuk kuliah
-   - Target: Label/kelas output (Dropout, Enrolled, Graduate)
+Berisi informasi penilaian (rating) yang diberikan oleh 73.516 pengguna terhadap berbagai judul anime:
+- user_id: ID unik dari pengguna (anonim, diacak)
+- anime_id: ID anime yang dinilai oleh pengguna
+- rating: Skor yang diberikan pengguna terhadap anime (skala 1–10, atau -1 jika ditonton tetapi tidak diberi rating)
 
 ### Exploratory Data Analisis
 
-![histogram](https://github.com/user-attachments/assets/be451cfd-ace7-46e5-b6bc-1feb35ac4e08)
 
-Untuk memahami distribusi awal dari setiap fitur dalam dataset, dilakukan visualisasi menggunakan histogram. Gambar di atas menggambarkan distribusi dari 36 fitur numerik dan kategorikal dalam dataset. Berikut beberapa temuan penting dari hasil eksplorasi data:
-
-1. Distribusi Biner dan Kategorikal
-   - Gender, Displaced, Educational special needs, Scholarship holder, International, Debtor, dan Tuition fees up to date menunjukkan distribusi yang sangat tidak seimbang. Contohnya, sebagian besar mahasiswa tidak memiliki kebutuhan khusus dan bukan penerima beasiswa.
-   - Daytime/evening attendance juga didominasi oleh salah satu kelas (kemungkinan mahasiswa pagi).
-   - Fitur kategorikal seperti Marital status, Application mode, Course, Mother's/Father's occupation, dan Previous qualification menunjukkan bahwa beberapa kategori sangat dominan, sementara kategori lain sangat jarang muncul, yang bisa berdampak pada generalisasi model.
-
-2. Distribusi Numerik
-   - Fitur seperti Age at enrollment menunjukkan distribusi right-skewed di mana mayoritas mahasiswa berusia antara 17–25 tahun, namun ada outlier dengan usia lebih dari 60 tahun.
-   - Admission grade dan Previous qualification grade memiliki distribusi normal dengan sedikit skewness ke kiri, berkisar antara 80 hingga 200 poin.
-   - Curricular units di semester 1 dan 2 seperti approved, grade, enrolled, dan evaluations menunjukkan distribusi yang sangat skewed ke kanan dengan banyak mahasiswa memiliki nilai/aktivitas rendah.
-   - Fitur ekonomi makro seperti GDP, Unemployment rate, dan Inflation rate memiliki variabilitas cukup tinggi dan distribusi yang terfragmentasi, kemungkinan karena hanya mencerminkan beberapa tahun akademik tertentu.
-
-3. Potensi Masalah
-   - Beberapa fitur memiliki outlier ekstrem, seperti pada Age at enrollment, Previous qualification grade, dan GDP, yang perlu dipertimbangkan dalam proses praproses data.
-   - Terdapat ketidakseimbangan kelas yang jelas dalam beberapa fitur biner dan kategorikal, yang bisa memengaruhi performa model jika tidak diatasi dengan teknik tertentu seperti oversampling atau class weight.
 
 ## Data Preparation
 
-Dalam proses data preparation yang dilakukan, beberapa tahapan penting diterapkan untuk memastikan data siap digunakan dalam model machine learning. Berikut adalah penjelasan rinci mengenai setiap tahapan yang dilakukan, alasan mengapa tahapan tersebut diperlukan, dan teknik yang digunakan:
+Dalam proses data preparation yang dilakukan, terdapat beberapa tahapan penting yang diterapkan untuk memastikan bahwa data yang digunakan bersih, relevan, dan siap untuk digunakan. Berikut merupakan tahapan-tahapan yang dilakukan dalam proses data preparation:
 
-1. Penanganan Outliers (Nilai Pencilan)
-   - Proses: Menggunakan Interquartile Range (IQR) untuk mengidentifikasi dan membatasi (cap) outliers pada kolom numerik. Outliers adalah nilai yang sangat jauh dari nilai lainnya dan bisa menyebabkan model gagal mempelajari pola yang sebenarnya.
-   - Alasan: Outliers dapat mengganggu performa model, terutama pada model berbasis jarak. Dengan membatasi outliers, kami memastikan bahwa model tidak terpengaruh oleh data ekstrem yang tidak representatif.
+1. Menghapus Duplikasi pada Kolom name
+   - Proses: Menghapus entri duplikat berdasarkan kolom name untuk memastikan setiap anime hanya muncul satu kali dalam dataset.
+   - Alasan: Duplikasi dapat menyebabkan bias dalam analisis dan model prediktif, karena data yang sama akan dihitung lebih dari sekali dan mempengaruhi distribusi nilai.
 
-2. Pemisaan Kolom Kategorikal dan Numerikal
-   - Pada tahap ini, dilakukan pemisahan antara kolom numerik dan kolom kategorikal. Kolom bertipe data object dan category dikategorikan sebagai kolom kategorikal, sedangkan kolom bertipe int64 dan float64 dianggap sebagai kolom numerik.
+2. Menghapus Nilai Kosong (NaN) pada Kolom genre
+   - Proses: Baris dengan nilai NaN pada kolom genre dihapus dari dataset.
+Alasan: Genre merupakan fitur penting yang dapat menggambarkan karakteristik konten dari anime. Nilai kosong pada kolom ini akan mengurangi informasi yang tersedia bagi model atau analisis eksploratif.
 
-3. Penghapusan Kategori Langka pada Kolom Kategorikal
-   - Proses: Pada kolom kategorikal, kami mengidentifikasi kategori langka (kategori yang memiliki frekuensi < 1%) dan mengganti kategori tersebut dengan label 'Other'. Hal ini dilakukan untuk mengurangi jumlah kategori yang sangat sedikit dan kemungkinan besar tidak memberikan informasi signifikan.
-   - Alasan: Kategori langka bisa menambah kompleksitas model tanpa memberikan kontribusi berarti. Menghapus atau menggabungkannya menjadi 'Other' membuat model lebih sederhana dan lebih efisien.
+Menghapus Nilai Kosong (NaN) pada Kolom type
+Proses: Baris dengan nilai NaN pada kolom type dihapus.
+Alasan: Tipe anime (TV, Movie, OVA, dll.) adalah informasi kategorikal yang esensial dalam segmentasi data. Nilai kosong pada fitur ini akan mengganggu proses klasifikasi atau pengelompokan.
 
-4. Normalisasi Data pada Kolom Numerikall
-   - Proses: Menggunakan StandardScaler untuk melakukan normalisasi pada fitur numerik. Teknik ini mengubah data sehingga memiliki distribusi dengan rata-rata 0 dan standar deviasi 1. Ini membantu model machine learning bekerja dengan lebih efisien, terutama pada algoritma yang sensitif terhadap skala fitur.
-   - Alasan: Dengan melakukan normalisasi, kita memastikan bahwa setiap fitur memiliki kontribusi yang setara dalam pelatihan model.
+Menghapus Nilai "Unknown" pada Kolom episodes
+Proses: Baris dengan nilai "Unknown" pada kolom episodes dihapus dari dataset.
+Alasan: Kolom episodes berisi jumlah episode yang merupakan data numerik. Nilai "Unknown" tidak dapat diproses secara numerik dan dapat mengganggu proses analisis atau pelatihan model prediktif.
 
-5. Persiapan Fitur dan Target (Label Encoding pada Target)
-   - Proses: Pada tahap ini, fitur prediktor (X) disiapkan dengan menghapus kolom 'target' dari DataFrame. Kemudian, kolom 'target' sebagai variabel yang akan diprediksi diubah menjadi bentuk numerik menggunakan LabelEncoder. Proses ini mengonversi kelas target dari bentuk kategorikal (string) menjadi bilangan bulat (misalnya: 'Graduate', 'Dropout', 'Enrolled' menjadi 0, 1, 2).
-   - Alasan: Algoritma machine learning umumnya hanya dapat bekerja dengan data numerik. Oleh karena itu, encoding diperlukan untuk merepresentasikan kelas target dalam format yang bisa diproses oleh model secara efisien dan konsisten.
-
-6. Pembagian Data Menjadi Data Latih dan Data Uji
-   - Proses: Dataset dibagi menjadi dua bagian, yaitu 90% untuk data latih (X_train, y_train) dan 10% untuk data uji (X_test, y_test) menggunakan fungsi train_test_split. Parameter stratify=y digunakan untuk memastikan proporsi kelas target tetap seimbang di kedua subset, dan random_state=42 digunakan untuk menjaga konsistensi hasil pembagian.
-   - Alasan: Pembagian ini penting agar model dapat dilatih pada sebagian data dan diuji pada data yang belum pernah dilihat sebelumnya, sehingga kita bisa mengevaluasi kinerja model secara obyektif. Stratifikasi digunakan untuk menghindari bias akibat distribusi kelas yang tidak merata.
-
-7. Penyeimbangan Kelas (Balancing the Classes)
-   - Proses: Menggunakan SMOTE (Synthetic Minority Over-sampling Technique) untuk menyeimbangkan jumlah sampel antara kelas mayoritas dan minoritas pada data pelatihan. Teknik ini menghasilkan data sintetis untuk kelas minoritas sehingga distribusi kelas menjadi lebih seimbang.
-   - Alasan: Pada dataset dengan ketidakseimbangan kelas yang besar, model cenderung lebih memprediksi kelas mayoritas. Dengan menyeimbangkan kelas, kita dapat meningkatkan kemampuan model dalam memprediksi kelas minoritas dengan lebih akurat.
+Menghapus Nilai Kosong (NaN) pada Kolom rating
+Proses: Baris dengan nilai NaN pada kolom rating dihapus.
+Alasan: Kolom rating mencerminkan penilaian komunitas terhadap anime dan menjadi indikator penting dalam model rekomendasi. Nilai kosong di kolom ini berarti tidak ada masukan dari pengguna dan sebaiknya dihilangkan agar tidak mengganggu analisis statistik.
 
 ## Modeling
 

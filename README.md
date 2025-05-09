@@ -10,7 +10,7 @@ Dalam proyek ini, dibangun sebuah sistem rekomendasi anime menggunakan metode Co
 
 Tujuan utama dari sistem ini adalah untuk merekomendasikan anime yang paling sesuai dengan selera pengguna berdasarkan konten yang telah mereka nikmati sebelumnya. Dengan sistem ini, platform streaming atau aplikasi anime tracker dapat memberikan saran tayangan yang lebih akurat dan meningkatkan kepuasan pengguna dalam eksplorasi anime.
 
-Beberapa penelitian terdahulu juga telah menunjukkan efektivitas sistem rekomendasi berbasis konten dalam domain hiburan. Penelitian oleh Lops et al. (2019) menunjukkan bahwa content-based filtering efektif dalam memberikan rekomendasi yang konsisten terhadap preferensi pengguna [2]. Studi lain oleh Iqbal et al. (2021) menyatakan bahwa sinopsis dan tag genre menjadi fitur paling relevan dalam sistem rekomendasi anime yang personalisasi [3].
+Beberapa penelitian terdahulu juga telah menunjukkan efektivitas sistem rekomendasi berbasis konten dalam domain hiburan. Penelitian oleh Lops et al. (2011) menunjukkan bahwa content-based filtering efektif dalam memberikan rekomendasi yang konsisten terhadap preferensi pengguna [2]. 
 
 Dengan pendekatan ini, diharapkan sistem rekomendasi anime berbasis content-based filtering dapat menjadi solusi praktis bagi penggemar anime dalam menemukan tontonan yang sesuai, mengurangi waktu pencarian, dan meningkatkan pengalaman menikmati anime secara keseluruhan.
 
@@ -251,6 +251,4 @@ Cosine Similarity adalah metode pengukuran kemiripan berbasis sudut antara dua v
 
 [1] MyAnimeList. (2021). User Viewing Behavior Report: Anime Selection Patterns. Diakses dari: https://myanimelist.net
 
-[2] Lops, P., de Gemmis, M., & Semeraro, G. (2019). Content-based Recommender Systems: State of the Art and Trends. In Recommender Systems Handbook (pp. 139-180). Springer.
-
-[3] Iqbal, M., Rahim, R., & Syahputra, R. (2021). Anime Recommendation System Based on Content-Based Filtering Using TF-IDF and Cosine Similarity. Journal of Physics: Conference Series, 1819(1), 012032. https://doi.org/10.1088/1742-6596/1819/1/012032
+[2] Lops, Pasquale & de Gemmis, Marco & Semeraro, Giovanni. (2011). Content-based Recommender Systems: State of the Art and Trends. 10.1007/978-0-387-85820-3_3. https://www.researchgate.net/publication/226098747_Content-based_Recommender_Systems_State_of_the_Art_and_Trends

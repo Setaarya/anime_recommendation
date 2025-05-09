@@ -75,7 +75,17 @@ Berisi informasi penilaian (rating) yang diberikan oleh 73.516 pengguna terhadap
 
 ### Exploratory Data Analisis
 
+Pertama kita melakukan analisis terhadap banyak kolom dan jenis data. Dataset yang digunakan terdiri dari 7 kolom dengan total 12,294 entri. Setelah itu, kita juga melakukan pengecekan nilai NaN dan duplikasi data. Hasilnya diperoleh bahwa ada nilai NaN di kolom genre, type, dan rating. Selain itu, juga ditemukan bahwa ada nilai 'Unknown' di kolom episodes dan ada 2 data duplikat di kolom name. Untuk lebih detailnya, berikut adalah tabel hasil analisis:
 
+| No | Kolom     | Non-Null Count | Tipe Data | Nilai NaN | Nilai `'Unknown'` | Duplikat |
+| -- | --------- | -------------- | --------- | --------- | ----------------- | -------- |
+| 1  | anime\_id | 12,294         | int64     | 0         | -                 | -        |
+| 2  | name      | 12,294         | object    | 0         | -                 | 2        |
+| 3  | genre     | 12,232         | object    | 62        | -                 | -        |
+| 4  | type      | 12,269         | object    | 25        | -                 | -        |
+| 5  | episodes  | 12,294         | object    | 0         | 340               | -        |
+| 6  | rating    | 12,064         | float64   | 230       | -                 | -        |
+| 7  | members   | 12,294         | int64     | 0         | -                 | -        |
 
 ## Data Preparation
 
@@ -87,165 +97,160 @@ Dalam proses data preparation yang dilakukan, terdapat beberapa tahapan penting 
 
 2. Menghapus Nilai Kosong (NaN) pada Kolom genre
    - Proses: Baris dengan nilai NaN pada kolom genre dihapus dari dataset.
-Alasan: Genre merupakan fitur penting yang dapat menggambarkan karakteristik konten dari anime. Nilai kosong pada kolom ini akan mengurangi informasi yang tersedia bagi model atau analisis eksploratif.
+   - Alasan: Genre merupakan fitur penting yang dapat menggambarkan karakteristik konten dari anime. Nilai kosong pada kolom ini akan mengurangi informasi yang tersedia bagi model atau
+     analisis eksploratif.
 
-Menghapus Nilai Kosong (NaN) pada Kolom type
-Proses: Baris dengan nilai NaN pada kolom type dihapus.
-Alasan: Tipe anime (TV, Movie, OVA, dll.) adalah informasi kategorikal yang esensial dalam segmentasi data. Nilai kosong pada fitur ini akan mengganggu proses klasifikasi atau pengelompokan.
+3. Menghapus Nilai Kosong (NaN) pada Kolom type
+   - Proses: Baris dengan nilai NaN pada kolom type dihapus.
+   - Alasan: Tipe anime (TV, Movie, OVA, dll.) adalah informasi kategorikal yang esensial dalam segmentasi data. Nilai kosong pada fitur ini akan mengganggu proses klasifikasi atau
+     pengelompokan.
 
-Menghapus Nilai "Unknown" pada Kolom episodes
-Proses: Baris dengan nilai "Unknown" pada kolom episodes dihapus dari dataset.
-Alasan: Kolom episodes berisi jumlah episode yang merupakan data numerik. Nilai "Unknown" tidak dapat diproses secara numerik dan dapat mengganggu proses analisis atau pelatihan model prediktif.
+4. Menghapus Nilai "Unknown" pada Kolom episodes
+   - Proses: Baris dengan nilai "Unknown" pada kolom episodes dihapus dari dataset.
+   - Alasan: Kolom episodes berisi jumlah episode yang merupakan data numerik. Nilai "Unknown" tidak dapat diproses secara numerik dan dapat mengganggu proses analisis atau pelatihan
+     model prediktif.
 
-Menghapus Nilai Kosong (NaN) pada Kolom rating
-Proses: Baris dengan nilai NaN pada kolom rating dihapus.
-Alasan: Kolom rating mencerminkan penilaian komunitas terhadap anime dan menjadi indikator penting dalam model rekomendasi. Nilai kosong di kolom ini berarti tidak ada masukan dari pengguna dan sebaiknya dihilangkan agar tidak mengganggu analisis statistik.
+5. Menghapus Nilai Kosong (NaN) pada Kolom rating
+   - Proses: Baris dengan nilai NaN pada kolom rating dihapus.
+   - Alasan: Kolom rating mencerminkan penilaian komunitas terhadap anime dan menjadi indikator penting dalam model rekomendasi. Nilai kosong di kolom ini berarti tidak ada masukan dari
+     pengguna dan sebaiknya dihilangkan agar tidak mengganggu analisis statistik.
 
 ## Modeling
 
-Pada tahap pemodelan ini, kami menggunakan XGBoost (Extreme Gradient Boosting) dengan algoritma XGBClassifier untuk menyelesaikan permasalahan klasifikasi pada dataset. Berikut adalah penjelasan terkait tahapan, parameter yang digunakan, serta proses evaluasi model:
+Dalam pembuatan sistem content based filtering digunakan TF-IDF sebagai metode untuk merepresentasikan data teks (dalam hal ini genre) ke dalam bentuk vektor numerik dan Cosine Similarity sebagai metode untuk mengukur kemiripan antar vektor genre dari setiap anime.
 
-XGBClassifier adalah sebuah algoritma machine learning yang menggunakan model XGBoost (Extreme Gradient Boosting) untuk masalah klasifikasi. XGBoost adalah metode yang berbasis pada teknik Gradient Boosting, yang merupakan algoritma ensemble learning yang menggabungkan beberapa model prediksi (decision trees) untuk menghasilkan prediksi yang lebih kuat.
+### TF-IDF
+TF-IDF (Term Frequency-Inverse Document Frequency) adalah metode statistik yang mengevaluasi pentingnya suatu kata dalam dokumen relatif terhadap kumpulan dokumen. Dalam konteks sistem rekomendasi anime, dokumen adalah genre anime dan kata-kata adalah komponen genre individu.
 
-Cara Kerja:
+- Cara kerja TF-IDF:
+  
+   1). Term Frequency (TF): Menghitung frekuensi kemunculan sebuah kata dalam dokumen. Semakin sering kata muncul dalam dokumen, semakin tinggi nilai TF-nya.
+   
+      `TF(t, d) = (Jumlah kemunculan term t dalam dokumen d) / (Total term dalam dokumen d)`
+      
+   2). Inverse Document Frequency (IDF): Mengukur seberapa penting sebuah kata dengan mempertimbangkan kejarangannya di seluruh koleksi dokumen. Kata yang jarang muncul di banyak dokumen akan memiliki nilai IDF tinggi.
+   
+      `IDF(t) = log_e(Total dokumen / Jumlah dokumen yang mengandung term t)`
+     
+   3). TF-IDF: Hasil perkalian dari TF dan IDF, memberikan nilai yang tinggi pada kata yang sering muncul dalam dokumen tertentu tetapi jarang dalam koleksi dokumen.
+   
+      `TF-IDF(t, d) = TF(t, d) × IDF(t)`
+      
+- Kelebihan TF-IDF:
+   - Mampu menangkap informasi yang penting dan spesifik dalam sebuah dokumen
+   - Mengurangi pengaruh kata-kata umum yang tidak memberi nilai informasi tinggi
+   - Relatif sederhana dan efisien dalam komputasi
+   - Mudah diimplementasikan dan intuitif untuk dipahami
 
-Gradient Boosting bekerja dengan membangun pohon keputusan (decision trees) secara bertahap. Setiap pohon yang baru dibangun akan berfokus untuk memperbaiki kesalahan yang dilakukan oleh pohon-pohon sebelumnya.
+- Kekurangan TF-IDF:
+   - Tidak memperhitungkan semantik atau konteks kata
+   - Tidak mempertimbangkan urutan kata dalam dokumen
+   - Rentan terhadap masalah dimensionalitas tinggi pada dataset besar
+   - Tidak dapat menangkap hubungan antar kata (misalnya sinonim)
 
-XGBClassifier menggunakan pendekatan boosting di mana setiap pohon yang dibuat mencoba untuk mengurangi kesalahan dari pohon sebelumnya dengan menghitung gradien dari kesalahan tersebut.
+### Cosine Similarity
+Cosine Similarity adalah metode pengukuran kemiripan berbasis sudut antara dua vektor. Cosine Similarity mengukur kemiripan dua vektor dengan menghitung kosinus sudut di antara keduanya. Nilai cosine similarity berkisar antara -1 hingga 1, di mana 1 berarti vektor identik, 0 berarti tidak berkorelasi, dan -1 berarti berlawanan arah.
 
-Model ini juga menggunakan berbagai teknik optimasi untuk meningkatkan kecepatan pelatihan dan mengurangi overfitting, seperti regularization, column subsampling, dan row subsampling.
+- Cara kerja Cosine Similarity:
 
-Parameter dan Nilai Parameter
-XGBClassifier dalam proyek ini masih menggunakan parameter default. Berikut adalah beberapa parameter default dalam XGBClassifier:
+   1). Representasi Vektor: Setiap anime direpresentasikan sebagai vektor multi-dimensi (hasil dari TF-IDF)
+  
+   2). Perhitungan Dot Product: Menghitung dot product dari dua vektor
 
-- learning_rate: Default = 0.3
-  Menentukan ukuran langkah yang digunakan untuk memperbarui bobot di setiap iterasi. Nilai yang lebih rendah bisa meningkatkan ketelitian model tetapi membutuhkan lebih banyak pohon (iteration) untuk mencapai konvergensi.
+   3). Normalisasi: Membagi dot product dengan hasil kali panjang (magnitude) kedua vektor
+      
+      Rumus Cosine Similarity:
+      
+      `Cosine Similarity(A, B) = (A · B) / (||A|| × ||B||)`
+      
+      Di mana:
+      - A · B adalah dot product dari vektor A dan B
+      - ||A|| adalah panjang (magnitude) vektor A
+      - ||B|| adalah panjang (magnitude) vektor B
 
-- n_estimators: Default = 100
-  Merupakan jumlah maksimum pohon keputusan yang akan dibuat oleh model. Setiap pohon memperbaiki kesalahan yang dilakukan oleh pohon sebelumnya.
+- Kelebihan Cosine Similarity:
+   - Tidak sensitif terhadap ukuran dokumen, hanya mempertimbangkan orientasi vektor
+   - Baik untuk data sparse (seperti matriks TF-IDF)
+   - Efisien untuk perhitungan kemiripan dalam ruang dimensi tinggi
+   - Mudah diinterpretasikan: nilai mendekati 1 berarti sangat mirip
 
-- max_depth: Default = 6
-  Menentukan kedalaman maksimal pohon keputusan. Semakin dalam pohon, semakin kompleks modelnya. Nilai yang lebih tinggi dapat menyebabkan overfitting jika tidak diatur dengan hati-hati.
+- Kekurangan Cosine Similarity:
+   - Tidak mempertimbangkan perbedaan besaran nilai jika orientasi vektor sama
+   - Kurang efektif untuk data dengan distribusi yang tidak merata
+   - Bisa menyebabkan bias terhadap data yang memiliki nilai nol pada banyak dimensi
+   - Tidak memperhitungkan korelasi non-linear antara fitur
 
-- subsample: Default = 1
-  Menentukan proporsi data yang digunakan untuk membangun setiap pohon keputusan. Pengaturan nilai lebih rendah dapat mencegah overfitting dengan melakukan subsampling pada data pelatihan.
+### Langkah-Langkah Implementasi:
 
-- colsample_bytree: Default = 1
-  Menentukan proporsi fitur yang digunakan untuk setiap pohon keputusan. Dengan menurunkan nilai ini, kita mengurangi kompleksitas model dan membantu generalisasi.
+1. Preprocessing Genre
+   
+   Menggunakan TfidfVectorizer untuk mengubah kolom genre menjadi representasi numerik berbasis TF-IDF, yang menekankan kata-kata unik dalam genre setiap anime.
+   - Setiap anime memiliki daftar genre (misalnya "Action, Adventure, Comedy")
+   - TfidfVectorizer memecah genre menjadi komponen individual (misalnya "Action", "Adventure", "Comedy")
+   - Setiap komponen genre diberi bobot berdasarkan frekuensi kemunculannya dalam anime tersebut (TF) dan keunikannya di seluruh dataset (IDF)
+   - Hasil akhir adalah matriks di mana setiap baris mewakili anime dan setiap kolom mewakili komponen genre dengan nilai TF-IDF
 
-- objective: Default = 'binary:logistic'
-  Menentukan jenis masalah yang ingin diselesaikan. Dalam hal ini, digunakan untuk masalah klasifikasi biner, di mana model akan mengoutputkan probabilitas untuk dua kelas.
+2. Menghitung Kemiripan
+   
+   Menggunakan cosine_similarity untuk mengukur kedekatan antar anime berdasarkan genre-nya.
+   - Cosine similarity menghitung tingkat kemiripan antar semua pasangan anime
+   - Nilai mendekati 1 menunjukkan genre yang sangat mirip
+   - Nilai mendekati 0 menunjukkan genre yang sangat berbeda
+   - Hasil akhir berupa matriks kemiripan dengan ukuran n×n, di mana n adalah jumlah anime
 
-- booster: Default = 'gbtree'
-  Menentukan jenis model boosting yang digunakan. 'gbtree' mengindikasikan penggunaan pohon keputusan sebagai estimator dasar, yang umum digunakan untuk klasifikasi dan regresi.
+3. Fungsi Rekomendasi dengan Input Judul Anime
+   
+   Fungsi anime_recommendations(anime_title) akan menghasilkan daftar anime yang paling mirip dengan judul input.
+   - Mencari anime dengan nilai cosine similarity tertinggi terhadap anime input
+   - Menggunakan algoritma partisi untuk mendapatkan k anime paling mirip secara efisien
+   - Menghapus anime input dari hasil rekomendasi
+   - Menggabungkan hasil dengan data asli untuk mendapatkan informasi genre
 
-### Kelebihan dan Kekurangan XGBoost
+4. Fungsi Rekomendasi dengan Input Genre Anime
+   
+   Fungsi get_recommendations_by_genre(genre) akan mencari anime dengan genre tersebut dan merekomendasikan anime yang mirip dengan salah satu judulnya.
+   - Memfilter dataset untuk mencari anime yang mengandung genre yang diminta
+   - Memilih satu anime dari hasil filter sebagai titik acuan
+   - Menggunakan fungsi anime_recommendations untuk mendapatkan anime yang mirip
+   - Memformat hasil dalam bentuk tabel yang mudah dibaca
 
-Kelebihan dan Kekurangan XGBClassifier
+### Top 10 Recommendations
+1. Top 10 Rekomendasi Anime Mirip dengan Gintama
 
-Kelebihan:
-- Akurasi tinggi: XGBoost dikenal memiliki akurasi yang sangat baik, bahkan pada dataset besar dengan banyak fitur.
-- Kemampuan menangani missing values dan outliers: Model ini dapat menangani nilai yang hilang dan outliers dengan baik tanpa memerlukan preprocessing yang berlebihan.
-- Kecepatan dan Efisiensi: XGBoost sangat cepat dalam pelatihan dan prediksi karena optimisasi yang dilakukan pada level pohon keputusan.
+| No | Nama Anime | Genre |
+|----|-----------|-------|
+| 1 | Gintama: Jump Festa 2014 Special | Action, Comedy, Historical, Parody, Samurai, Shounen |
+| 2 | Gintama° | Action, Comedy, Historical, Parody, Samurai, Shounen |
+| 3 | Gintama' | Action, Comedy, Historical, Parody, Samurai, Shounen |
+| 4 | Gintama Movie: Shinyaku Benizakura-hen | Action, Comedy, Historical, Parody, Samurai, Shounen |
+| 5 | Gintama: Shinyaku Benizakura-hen | Action, Comedy, Historical, Parody, Samurai, Shounen |
+| 6 | Gintama: Yorinuki Gintama-san on Theater 2D | Action, Comedy, Historical, Parody, Samurai, Shounen |
+| 7 | Gintama Movie: Kanketsu-hen - Yorozuya yo Eien... | Action, Comedy, Historical, Parody, Samurai, Shounen |
+| 8 | Gintama': Enchousen | Action, Comedy, Historical, Parody, Samurai, Shounen |
+| 9 | Gintama: Nanigoto mo Saiyo ga Kanjin nano de T... | Action, Comedy, Historical, Mecha, Parody, Samurai, Shounen |
+| 10 | Gintama: Jump Festa 2015 Special | Action, Comedy, Historical, Parody, Samurai, Shounen |
 
-Kekurangan:
-- Sensitif terhadap parameter: Meskipun secara default sangat kuat, model ini sangat bergantung pada pengaturan parameter untuk mendapatkan performa terbaik.
-- Kesulitan dengan data yang sangat tidak seimbang: Meskipun SMOTE digunakan untuk penyeimbangan kelas, XGBoost mungkin masih mengalami kesulitan dalam menangani ketidakseimbangan kelas yang ekstrem tanpa penyesuaian lebih lanjut.
+2. Top 10 Rekomendasi Anime dengan Genre Action
+
+| No | Nama Anime | Genre |
+|----|-----------|-------|
+| 1 | Fullmetal Alchemist | Action, Adventure, Comedy, Drama, Fantasy, Magic, Military, Shounen |
+| 2 | Fullmetal Alchemist: The Sacred Star of Milos | Action, Adventure, Comedy, Drama, Fantasy, Magic, Military, Shounen |
+| 3 | Fullmetal Alchemist: Brotherhood Specials | Adventure, Drama, Fantasy, Magic, Military, Shounen |
+| 4 | Tales of Vesperia: The First Strike | Action, Adventure, Fantasy, Magic, Military |
+| 5 | Tide-Line Blue | Action, Adventure, Drama, Military, Shounen |
+| 6 | Fullmetal Alchemist: Reflections | Adventure, Comedy, Drama, Fantasy, Military, Shounen |
+| 7 | Meoteoldosawa Ttomae | Action, Adventure, Fantasy, Magic, Shounen |
+| 8 | Log Horizon Recap | Action, Adventure, Fantasy, Magic, Shounen |
+| 9 | Dragon Quest: Dai no Daibouken Tachiagare!! Aban no Shito | Action, Adventure, Fantasy, Magic, Shounen |
+| 10 | Magi: Sinbad no Bouken (TV) | Action, Adventure, Fantasy, Magic, Shounen |
 
 ## Evaluation
 
-Pada proyek ini, kita menggunakan beberapa metrik evaluasi untuk menilai kinerja model klasifikasi yang diterapkan pada data siswa. Metrik yang digunakan meliputi akurasi, precision, recall, dan F1 score. Masing-masing metrik ini memiliki tujuan yang berbeda, yang membantu kita memahami kinerja model secara lebih menyeluruh.
-
-- Akurasi (Accuracy):
-
-  Akurasi mengukur seberapa sering model melakukan prediksi yang benar. Metrik ini berguna untuk memberikan gambaran umum tentang kinerja model pada dataset yang seimbang. Namun, akurasi bisa menjadi metrik yang menyesatkan jika data tidak seimbang (misalnya, jika satu kelas lebih dominan daripada yang lain).
-
-- Precision (Presisi)
-
-  Precision mengukur seberapa tepat model dalam memprediksi kelas positif. Metrik ini penting jika kita ingin meminimalkan jumlah kesalahan tipe I (false positives). Dalam konteks ini, precision mengukur seberapa banyak prediksi untuk setiap kelas benar.
-
-- Recall (Sensitivitas)
-
-  Recall mengukur kemampuan model untuk menangkap seluruh kelas positif yang ada di dalam data. Recall sangat penting jika kita ingin meminimalkan kesalahan tipe II (false negatives), yang berarti kita ingin memastikan sebanyak mungkin kelas positif terdeteksi.
-
-- F1 Score
-
-  F1 score adalah rata-rata harmonis dari precision dan recall. Metrik ini berguna ketika kita ingin keseimbangan antara precision dan recall, terutama dalam kasus di mana keduanya sangat penting. F1 score memberikan gambaran yang lebih baik daripada akurasi dalam konteks data yang tidak seimbang.
-
-### Analisis Pemilihan Model Terbaik:
-
-![barplot](https://github.com/user-attachments/assets/c6d1e12a-92de-4340-8128-272097436883)
-
-Dari hasil evaluasi, model XGBoost dipilih sebagai model terbaik untuk solusi ini dengan alasan sebagai berikut:
-
-- Akurasi Tertinggi:
-
-  XGBoost menghasilkan akurasi tertinggi yaitu 78.10%, mengungguli model lain seperti Random Forest (76.98%), Logistic Regression (75.17%), dan KNN (65.01%).
-
-- Kinerja yang Konsisten di Semua Kelas:
-
-   Pada kelas 1 (kelas minoritas), XGBoost menunjukkan hasil yang lebih baik dibanding model lain dengan recall 0.51 dan precision 0.50. Meskipun belum ideal, ini tetap menjadi yang terbaik di antara seluruh model yang diuji.
-
-- Untuk kelas 0 dan kelas 2, XGBoost menunjukkan kinerja yang sangat baik:
-
-   Kelas 0: precision 0.84, recall 0.75
-
-   Kelas 2: precision 0.85, recall 0.90
-
-- Rata-Rata Makro dan Tertimbang yang Seimbang:
-
-  XGBoost memiliki rata-rata macro precision (0.73), recall (0.72), dan F1-score (0.72) yang seimbang, menunjukkan kemampuan model dalam menjaga performa di seluruh kelas, termasuk minoritas.
-
-Kelemahan Model Lain:
-
-- Random Forest hanya sedikit di bawah XGBoost, namun performa pada kelas 1 masih kurang optimal (precision 0.47, recall 0.50).
-
-- Logistic Regression mengalami penurunan akurasi dan performa pada kelas 0 dan 1 lebih buruk, meskipun kinerja pada kelas 2 cukup baik.
-
-- KNN menunjukkan performa terendah di semua metrik, dengan akurasi 65.01% dan macro F1-score 0.62, menjadikannya model yang tidak direkomendasikan.
-
-### Conclusion
-
-Proyek ini secara langsung menjawab masalah yang dihadapi oleh institusi pendidikan dalam mempertahankan tingkat kelulusan mahasiswa dan meminimalkan risiko dropout. Dengan menggunakan model klasifikasi berbasis XGBoost, kita dapat mengidentifikasi mahasiswa yang berisiko tinggi mengalami dropout berdasarkan data historis yang tersedia. 
-
-*Identifikasi Mahasiswa yang Berisiko Dropout:*
-
-Model XGBoost yang telah dievaluasi berhasil memberikan prediksi yang akurat dengan akurasi tertinggi sebesar 78.10%, diikuti oleh performa yang cukup baik pada kelas-kelas minoritas (seperti kelas 1 yang berisiko tinggi). Hal ini sesuai dengan kebutuhan untuk mengidentifikasi mahasiswa yang berisiko tinggi gagal, berdasarkan data akademik dan administrasi mereka.
-
-*Meningkatkan Kualitas Layanan Akademik:*
-
-Dengan menggunakan hasil dari model XGBoost, institusi dapat mengintegrasikan sistem prediksi ini ke dalam sistem pengelolaan akademik mereka. Misalnya, pihak universitas bisa melakukan intervensi dini kepada mahasiswa yang diprediksi berisiko, seperti memberikan bimbingan atau konseling untuk membantu mahasiswa agar tetap pada jalur kelulusan.
-
-*Identifikasi Fitur-fitur Penting:*
-
-Dari model XGBoost, analisis fitur penting menunjukkan bahwa faktor-faktor seperti penyelesaian mata kuliah semester genap, pembayaran biaya kuliah tepat waktu, dan beban mata kuliah pada semester pertama dan kedua sangat berpengaruh terhadap keberhasilan akademik mahasiswa. Hal ini memberikan wawasan yang berguna bagi universitas untuk merancang kebijakan yang lebih efektif, seperti memberikan beasiswa, mengelola beban studi, atau menyediakan pendampingan keuangan.
-
-*Membangun Model Prediksi Dropout Mahasiswa:*
-
-Model XGBoost telah berhasil dibangun dan dievaluasi dengan hasil yang memuaskan, mencapai akurasi sebesar 78.10% dan performa yang baik pada beberapa metrik lainnya. Ini menunjukkan bahwa model tersebut dapat diandalkan untuk prediksi dropout mahasiswa berdasarkan data yang ada.
-
-*Menyediakan Sistem Klasifikasi untuk Intervensi Dini:*
-
-Output dari model ini memberikan informasi yang dapat digunakan oleh dosen pembimbing, bagian kemahasiswaan, atau pusat layanan akademik untuk melakukan intervensi dini. Dengan mengetahui mahasiswa yang berisiko, mereka dapat merencanakan langkah-langkah yang diperlukan untuk meningkatkan peluang kelulusan mahasiswa tersebut.
-
-*Mengidentifikasi Fitur yang Mempengaruhi Keberhasilan Studi Mahasiswa:*
-
-Dengan menggunakan analisis fitur penting, hasil dari model XGBoost menunjukkan faktor-faktor yang paling berpengaruh terhadap keberhasilan akademik mahasiswa, seperti penyelesaian mata kuliah dan pembayaran biaya kuliah tepat waktu. Ini memberi petunjuk bagi universitas untuk merancang program-program pendukung yang lebih tepat sasaran.
-
-*Menggunakan Algoritma XGBoost sebagai Model Prediktif:*
-
-Penggunaan XGBoost terbukti efektif, dengan akurasi dan fitur interpretabilitas yang sangat membantu dalam memahami faktor-faktor yang berpengaruh terhadap keberhasilan akademik mahasiswa. Model ini memberikan solusi yang sangat berdampak karena dapat dipakai dalam aplikasi dunia nyata untuk mendeteksi mahasiswa yang berisiko tinggi gagal dan memerlukan intervensi.
-
-*Mengevaluasi Model dengan Algoritma Alternatif:*
-
-Evaluasi terhadap algoritma alternatif (Random Forest dan Logistic Regression) memberikan wawasan bahwa meskipun model lain memberikan hasil yang cukup baik, XGBoost tetap menjadi pilihan terbaik dengan akurasi tertinggi dan kemampuan untuk menjaga keseimbangan kinerja antar kelas. Pemilihan model ini berkontribusi pada pemilihan solusi terbaik yang efektif untuk aplikasi pendidikan tinggi.
-
-Dengan menggunakan model XGBoost untuk memprediksi risiko dropout mahasiswa, proyek ini memberikan dampak yang signifikan terhadap pemahaman institusi mengenai faktor-faktor yang memengaruhi keberhasilan akademik. Model ini tidak hanya memberikan prediksi yang akurat, tetapi juga memungkinkan pengambilan keputusan yang lebih berbasis data untuk membantu mahasiswa yang berisiko tinggi. Implementasi sistem prediksi ini dapat meningkatkan kualitas layanan akademik dan membantu meminimalkan angka dropout di masa depan, yang sejalan dengan tujuan strategis institusi pendidikan.
-
 ## Daftar Pustaka
 
-[1] World Bank. (2021). Learning Poverty in the Time of COVID-19: A crisis within a crisis. https://www.worldbank.org/en/topic/education/publication/learning-poverty-in-the-time-of-covid-19
+[1] MyAnimeList. (2021). User Viewing Behavior Report: Anime Selection Patterns. Diakses dari: https://myanimelist.net
 
-[2] Castro, M., Oliveira, M., & Silva, A. (2020). Early prediction of student dropout and academic failure using machine learning: A case study with Portuguese higher education data. Education and Information Technologies, 25, 4745–4763. https://doi.org/10.1007/s10639-020-10183-w
+[2] Lops, P., de Gemmis, M., & Semeraro, G. (2019). Content-based Recommender Systems: State of the Art and Trends. In Recommender Systems Handbook (pp. 139-180). Springer.
 
-[3] Umer, S. R., Sherin, S., & Ahmad, M. (2022). A predictive model for student dropout using supervised machine learning techniques. Computers & Education: Artificial Intelligence, 3, 100076. https://doi.org/10.1016/j.caeai.2022.100076
+[3] Iqbal, M., Rahim, R., & Syahputra, R. (2021). Anime Recommendation System Based on Content-Based Filtering Using TF-IDF and Cosine Similarity. Journal of Physics: Conference Series, 1819(1), 012032. https://doi.org/10.1088/1742-6596/1819/1/012032

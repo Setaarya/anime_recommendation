@@ -2,16 +2,13 @@
 
 ## Domain Proyek
 
-Permasalahan dalam menemukan anime yang sesuai dengan preferensi individu masih menjadi tantangan signifikan di berbagai platform streaming dan komunitas penggemar anime. Banyaknya judul yang tersedia, genre yang beragam, serta perbedaan selera pengguna membuat proses pencarian anime yang cocok seringkali memakan waktu dan tidak efisien. Penelitian yang dilakukan oleh Jannach et al. (2020) menunjukkan bahwa rata-rata pengguna platform hiburan online menghabiskan 15-25% waktu mereka hanya untuk proses pemilihan konten, fenomena yang dikenal sebagai "choice overload" atau kelebihan pilihan [1].
-
-Studi oleh Chen et al. (2018) pada platform anime menunjukkan bahwa 78% pengguna merasa kesulitan menemukan anime baru yang sesuai dengan preferensi mereka, dengan lebih dari 65% responden menyatakan bahwa rekomendasi berbasis algoritma sangat membantu dalam proses penemuan konten [2]. Masalah ini bersifat kompleks karena dipengaruhi oleh preferensi personal yang unik dari setiap pengguna, seperti genre favorit, gaya animasi yang disukai, tema cerita, hingga rating dan popularitas.
-Masalah ini bersifat kompleks karena dipengaruhi oleh preferensi personal yang unik dari setiap pengguna, seperti genre favorit, gaya animasi yang disukai, tema cerita, hingga rating dan popularitas. Oleh karena itu, dibutuhkan pendekatan berbasis data untuk membantu pengguna menemukan rekomendasi anime yang relevan dan personalisasi dengan lebih cepat dan akurat.
+Permasalahan dalam menemukan anime yang sesuai dengan preferensi individu masih menjadi tantangan signifikan di berbagai platform streaming dan komunitas penggemar anime. Banyaknya judul yang tersedia, genre yang beragam, serta perbedaan selera pengguna membuat proses pencarian anime yang cocok seringkali memakan waktu dan tidak efisien. Penelitian yang dilakukan oleh Jannach et al. (2020) menunjukkan bahwa rata-rata pengguna platform hiburan online menghabiskan 15-25% waktu mereka hanya untuk proses pemilihan konten, fenomena yang dikenal sebagai "choice overload" atau kelebihan pilihan [1]. Masalah ini bersifat kompleks karena dipengaruhi oleh preferensi personal yang unik dari setiap pengguna, seperti genre favorit, gaya animasi yang disukai, tema cerita, hingga rating dan popularitas. Oleh karena itu, dibutuhkan pendekatan berbasis data untuk membantu pengguna menemukan rekomendasi anime yang relevan dan personalisasi dengan lebih cepat dan akurat.
 
 Dalam proyek ini, dibangun sebuah sistem rekomendasi anime menggunakan metode Content-Based Filtering. Pendekatan ini bekerja dengan cara menganalisis fitur-fitur dari anime yang pernah ditonton atau disukai pengguna, seperti genre, tipe penayangan, jumlah episode, jumlah member komunitas, dan skor rating, untuk merekomendasikan anime lain dengan karakteristik serupa. Model ini memanfaatkan vectorization dari data teks (judul dan tag genre) menggunakan teknik seperti TF-IDF, serta menghitung kemiripan antar konten menggunakan metrik seperti cosine similarity.
 
 Tujuan utama dari sistem ini adalah untuk merekomendasikan anime yang paling sesuai dengan selera pengguna berdasarkan konten yang telah mereka nikmati sebelumnya. Dengan sistem ini, platform streaming atau aplikasi anime tracker dapat memberikan saran tayangan yang lebih akurat dan meningkatkan kepuasan pengguna dalam eksplorasi anime.
 
-Beberapa penelitian terdahulu juga telah menunjukkan efektivitas sistem rekomendasi berbasis konten dalam domain hiburan. Penelitian oleh Lops et al. (2011) menunjukkan bahwa content-based filtering efektif dalam memberikan rekomendasi yang konsisten terhadap preferensi pengguna [3]. Khusus untuk domain anime, penelitian oleh Kamishima et al. (2017) menunjukkan bahwa implementasi algoritma content-based recommendation meningkatkan tingkat kepuasan pengguna sebesar 31% dibandingkan dengan metode rekomendasi tradisional [4].
+Beberapa penelitian terdahulu juga telah menunjukkan efektivitas sistem rekomendasi berbasis konten dalam domain hiburan. Penelitian oleh Lops et al. (2011) menunjukkan bahwa content-based filtering efektif dalam memberikan rekomendasi yang konsisten terhadap preferensi pengguna [2].
 
 Dengan pendekatan ini, diharapkan sistem rekomendasi anime berbasis content-based filtering dapat menjadi solusi praktis bagi penggemar anime dalam menemukan tontonan yang sesuai, mengurangi waktu pencarian, dan meningkatkan pengalaman menikmati anime secara keseluruhan.
 
@@ -248,12 +245,62 @@ Cosine Similarity adalah metode pengukuran kemiripan berbasis sudut antara dua v
 
 ## Evaluation
 
+Pada proyek ini digunakan metrik evaluasi Cosine Similarity Score Average (Internal Metric) dan Precision@k.
+
+### Cosine Similarity Score Average (Internal Metric)
+
+Cosine Similarity Score Average adalah metrik internal yang menghitung rata-rata nilai kemiripan (similarity) antara item referensi dengan top-k item yang direkomendasikan oleh sistem. Metrik ini mengukur seberapa mirip konten yang direkomendasikan dengan konten referensi berdasarkan representasi vektor fitur-fiturnya. Semakin tinggi nilai rata-rata similarity, semakin baik sistem dalam merekomendasikan item yang memiliki karakteristik serupa dengan item referensi.
+
+Secara matematis, Cosine Similarity Score Average dapat diformulasikan sebagai berikut:
+
+![Cosine Similarity Score Average](https://github.com/user-attachments/assets/2f62ce5b-8097-4b4a-9bdb-3338d31a28f5)
+
+Keterangan:
+
+- CSSA: Cosine Similarity Score Average
+- k: Jumlah item rekomendasi teratas yang dievaluasi
+- 𝑣𝑟⃗: Vektor representasi item referensi (misalnya, vektor TF-IDF dari anime referensi)
+- 𝑣𝑖⃗: Vektor representasi item rekomendasi ke-i
+- cos(𝑣𝑟⃗,𝑣𝑖⃗): Nilai cosine similarity antara 𝑣𝑟⃗ dan 𝑣𝑖⃗
+​
+### Precision@k
+
+Precision@k adalah metrik evaluasi berbasis relevansi yang mengukur proporsi item yang relevan dari k item teratas yang direkomendasikan. Metrik ini mengevaluasi ketepatan sistem dalam merekomendasikan item yang benar-benar relevan dengan preferensi pengguna. Dalam konteks sistem rekomendasi anime, item yang relevan didefinisikan sebagai anime yang memiliki genre sama dengan anime referensi.
+
+Rumus Matematis Precision@k
+
+![Precision@k](https://github.com/user-attachments/assets/6890b785-5265-40b9-a256-25189c4a0629)
+ 
+Keterangan:
+
+- Precision@k: Ukuran ketepatan sistem rekomendasi dalam menampilkan item relevan pada daftar teratas sebanyak 𝑘 item
+- ∣{item relevan}∩{item rekomendasi top-𝑘}∣: Jumlah item yang relevan dan juga direkomendasikan dalam top-
+- 𝑘: Jumlah rekomendasi teratas yang dievaluasi
+
+### Hasil evaluasi
+
+Dari kedua matriks evaluasi diatas didapatkan hasil sebagai berikut:
+
+Cosine Similarity Score Average
+
+`Rata-rata skor kemiripan untuk rekomendasi 'Naruto' (Top-10): 0.9875639023932294`
+
+Precision@k
+
+`Relevant (Ground Truth): ['Gintama°', 'Gintama&#039;', 'Gintama Movie: Kanketsu-hen - Yorozuya yo Eien Nare', 'Gintama&#039;: Enchousen', 'Gintama: Yorinuki Gintama-san on Theater 2D', 'Gintama Movie: Shinyaku Benizakura-hen', 'Gintama: Shinyaku Benizakura-hen', 'Gintama: Jump Festa 2014 Special']`
+
+`Recommended: ['Gintama: Jump Festa 2014 Special', 'Gintama°', 'Gintama&#039;', 'Gintama Movie: Shinyaku Benizakura-hen', 'Gintama: Shinyaku Benizakura-hen']`
+
+`Precision@5: 0.8`
+
+Nilai Cosine Similarity Score Average (CSSA) sebesar 0.9876 menunjukkan bahwa sistem rekomendasi yang dikembangkan mampu memberikan daftar tontonan dengan konten yang sangat mirip dengan anime referensi dari segi genre dan judul. Selain itu, nilai Precision@5 sebesar 0.8 mengindikasikan bahwa 80% dari rekomendasi yang dihasilkan berhasil sesuai dengan daftar anime relevan yang berbagi genre maupun franchise yang sama. Hasil ini menegaskan bahwa pendekatan content-based filtering yang diterapkan cukup efektif dalam memahami kesamaan antar-anime secara semantik.
+
+Temuan tersebut memiliki keterkaitan yang erat dengan problem statements yang telah diidentifikasi sebelumnya. Permasalahan umum seperti lamanya waktu yang dihabiskan pengguna dalam memilih anime dapat diatasi melalui sistem rekomendasi ini, karena sistem secara otomatis mengidentifikasi kemiripan konten dan menyajikan daftar tontonan yang relevan, sehingga pengguna tidak perlu mencari secara manual. Selain itu, kelemahan sistem rekomendasi konvensional yang cenderung bergantung pada popularitas atau riwayat tontonan juga berhasil diatasi, karena pendekatan ini lebih berfokus pada pemahaman konten melalui fitur judul dan genre, bukan hanya sekadar popularitas.
+
+Dengan memanfaatkan teknik TF-IDF vectorization untuk mengekstraksi fitur dari teks dan cosine similarity untuk menghitung tingkat kemiripan antar-anime, sistem ini mampu menyajikan rekomendasi yang lebih personal dan sesuai dengan preferensi pengguna. Pencapaian ini secara langsung mendukung tujuan utama proyek, yaitu memberikan rekomendasi yang relevan dan personal, mengurangi waktu pencarian, memungkinkan eksplorasi anime yang belum populer, serta meningkatkan keterlibatan dan kepuasan pengguna terhadap platform rekomendasi.
+
 ## Daftar Pustaka
 
-[1] Jannach, D., Resnick, P., Tuzhilin, A., & Zanker, M. (2020). "Recommender Systems: Beyond Matrix Completion." Communications of the ACM, 63(11), 55-63. https://doi.org/10.1145/3383313
+[1] Jannach, Dietmar & Resnick, Paul & Tuzhilin, Alexander & Zanker, Markus. (2016). Recommender systems---: beyond matrix completion. Communications of the ACM. 59. 94-102. 10.1145/2891406. https://www.researchgate.net/publication/309600906_Recommender_systems---_beyond_matrix_completion
 
-[2] Chen, L., Wu, W., & He, L. (2018). "Personality and Recommendation Diversity in Anime Streaming Services." In Proceedings of the 12th ACM Conference on Recommender Systems (RecSys '18), 288-296. https://doi.org/10.1145/3240323.3240339
-
-[3] Lops, Pasquale & de Gemmis, Marco & Semeraro, Giovanni. (2011). Content-based Recommender Systems: State of the Art and Trends. 10.1007/978-0-387-85820-3_3. https://www.researchgate.net/publication/226098747_Content-based_Recommender_Systems_State_of_the_Art_and_Trends
-
-[5] Kamishima, T., Akaho, S., & Asoh, H. (2017). "Efficiency and Diversity in Anime Recommendation Algorithms." IEEE Transactions on Computational Social Systems, 4(2), 48-60. https://doi.org/10.1109/TCSS.2017.2665559
+[2] Lops, Pasquale & de Gemmis, Marco & Semeraro, Giovanni. (2011). Content-based Recommender Systems: State of the Art and Trends. 10.1007/978-0-387-85820-3_3. https://www.researchgate.net/publication/226098747_Content-based_Recommender_Systems_State_of_the_Art_and_Trends

@@ -54,13 +54,14 @@ print('Jumlah data anime : ', len(anime.anime_id.unique()))
 
 """Mengecek apakah ada nilai NaN di fitur name dan menampilkan jumlah data yang unik pada kolom fitur name, dari eksplorasi ada 2 data yang duplikat."""
 
-# Cek apakah ada nilai NaN di kolom 'name'
-if anime['name'].isnull().any():
-    print("Terdapat nilai NaN di kolom 'name'")
+# Cek apakah ada nilai NaN di kolom 'name' dan tampilkan jumlah NaN
+na_count = anime['name'].isnull().sum()
+if na_count > 0:
+    print(f"Terdapat {na_count} nilai NaN di kolom 'name'")
 else:
     print("Tidak ada nilai NaN di kolom 'name'")
 
-# Tampilkan jumlah dan nama anime yang unik
+# Tampilkan jumlah dan nama anime yang unik (tanpa NaN)
 print('Banyak data anime: ', len(anime['name'].dropna().unique()))
 print('Judul-judul anime: ', anime['name'].dropna().unique())
 
@@ -81,9 +82,10 @@ else:
  'Hentai, Sports' 'Drama, Romance, School, Yuri' 'Hentai, Slice of Life']
 """
 
-# Cek apakah ada nilai NaN di kolom 'genre'
-if anime['genre'].isnull().any():
-    print("Terdapat nilai NaN di kolom 'genre'")
+# Cek apakah ada nilai NaN di kolom 'genre' dan tampilkan jumlah NaN
+na_count = anime['genre'].isnull().sum()  # Menghitung jumlah NaN
+if na_count > 0:
+    print(f"Terdapat {na_count} nilai NaN di kolom 'genre'")
 else:
     print("Tidak ada nilai NaN di kolom 'genre'")
 
@@ -93,9 +95,10 @@ print('Genre-genre anime: ', anime['genre'].dropna().unique())
 
 """Menampilkan nilai nilai data di kolom fitur type dan mengecek apakah ada nilai NaN di kolom fitur type. Dan hasilnya menunjukkan bahwa ada nilai NaN di kolom fitur type. Dan ini merupakan nilai-nilai data di kolom fitur type, Tipe-tipe anime:  ['Movie' 'TV' 'OVA' 'Special' 'Music' 'ONA']"""
 
-# Cek apakah ada nilai NaN di kolom 'type'
-if anime['type'].isnull().any():
-    print("Terdapat nilai NaN di kolom 'type'")
+# Cek apakah ada nilai NaN di kolom 'type' dan tampilkan jumlah NaN
+na_count = anime['type'].isnull().sum()  # Menghitung jumlah NaN
+if na_count > 0:
+    print(f"Terdapat {na_count} nilai NaN di kolom 'type'")
 else:
     print("Tidak ada nilai NaN di kolom 'type'")
 
@@ -108,8 +111,9 @@ print('Tipe-tipe anime: ', anime['type'].dropna().unique())
 """
 
 # Cek apakah ada nilai NaN di kolom 'episodes'
-if anime['episodes'].isnull().any():
-    print("Terdapat nilai NaN di kolom 'episodes'")
+na_count = anime['episodes'].isnull().sum()
+if na_count > 0:
+    print(f"Terdapat {na_count} nilai NaN di kolom 'episodes'")
 else:
     print("Tidak ada nilai NaN di kolom 'episodes'")
 
@@ -117,11 +121,18 @@ else:
 print('Banyak episode anime: ', len(anime['episodes'].dropna().unique()))
 print('Episode-episode anime: ', anime['episodes'].dropna().unique())
 
+"""Menampilkan jumlah baris data dengan nilai "Unknown" pada kolom  episodes"""
+
+# Cek jumlah nilai 'Unknown' di kolom 'episodes'
+unknown_count = (anime['episodes'] == 'Unknown').sum()
+print(f"Terdapat {unknown_count} nilai 'Unknown' di kolom 'episodes'")
+
 """Menampilkan nilai nilai data unik di kolom fitur rating dan mengecek apakah ada nilai NaN di kolom fitur rating. Dan hasilnya menunjukkan bahwa  ada nilai NaN di kolom fitur rating. Nilai data dari kolom fitur rating berkisar antara -1 sampai dengan 10. -1 jika ditonton tetapi tidak diber rating"""
 
-# Cek apakah ada nilai NaN di kolom 'rating'
-if anime['rating'].isnull().any():
-    print("Terdapat nilai NaN di kolom 'rating'")
+# Cek apakah ada nilai NaN di kolom 'rating' dan tampilkan jumlah NaN
+na_count = anime['rating'].isnull().sum()
+if na_count > 0:
+    print(f"Terdapat {na_count} nilai NaN di kolom 'rating'")
 else:
     print("Tidak ada nilai NaN di kolom 'rating'")
 
@@ -241,10 +252,7 @@ print('Shape:', cosine_sim_df.shape)
 # Melihat similarity matrix pada setiap judul anime
 cosine_sim_df.sample(5, axis=1).sample(10, axis=0)
 
-"""# **EVALUATION**
-
-Fungsi anime_recommendations akan memberikan rekomendasi anime berdasarkan judul yang diberikan, dengan mencari anime yang paling mirip menggunakan cosine similarity. Fungsi ini akan mengembalikan daftar k anime yang paling mirip, mengabaikan judul anime yang diminta, dan menampilkan informasi genre dari anime tersebut.
-"""
+"""Fungsi anime_recommendations akan memberikan rekomendasi anime berdasarkan judul yang diberikan, dengan mencari anime yang paling mirip menggunakan cosine similarity. Fungsi ini akan mengembalikan daftar k anime yang paling mirip, mengabaikan judul anime yang diminta, dan menampilkan informasi genre dari anime tersebut."""
 
 def anime_recommendations(anime_title, similarity_data=cosine_sim_df, items=anime_cleaned[['name', 'genre']], k=50):
     # Mengambil indeks anime yang paling mirip berdasarkan nilai cosine similarity tertinggi
@@ -263,7 +271,7 @@ def anime_recommendations(anime_title, similarity_data=cosine_sim_df, items=anim
 """Menampilkan 50 rekomendasi teratas berdasarkan judul anime"""
 
 # Mendapatkan rekomendasi anime yang mirip dengan Gintama
-anime_recommendations('Naruto')
+anime_recommendations('Gintama')
 
 """Fungsi get_recommendations_by_genre memberikan rekomendasi anime berdasarkan genre yang diminta. Fungsi ini pertama-tama menyaring anime berdasarkan genre yang diberikan, kemudian memilih satu anime sebagai referensi dan menggunakan fungsi anime_recommendations untuk memberikan rekomendasi berdasarkan anime tersebut. Jika tidak ada anime yang sesuai dengan genre, fungsi ini akan mengembalikan pesan error. Hasilnya ditampilkan dalam bentuk tabel yang mencakup rekomendasi anime dan genre terkait."""
 
@@ -299,3 +307,58 @@ recommendations = get_recommendations_by_genre("Action")
 
 # Menampilkan hasil rekomendasi
 display(recommendations)
+
+"""# **EVALUATION**
+
+Cosine Similarity Score Average (Internal Metric)
+
+Mengukur seberapa "relevan" rekomendasi berdasarkan rata-rata kemiripan antara anime target dan anime lain yang paling mirip. Menghitung rata-rata skor kemiripan antara suatu anime (diberikan melalui anime_title) dan k anime lainnya yang paling mirip berdasarkan data kemiripan yang disediakan.
+"""
+
+def average_similarity_score(anime_title, similarity_data, k=10):
+    # Ambil nilai similarity terhadap anime_title
+    sim_scores = similarity_data[anime_title].drop(index=anime_title)
+    # Ambil k skor tertinggi
+    top_k_scores = sim_scores.sort_values(ascending=False).head(k)
+    return top_k_scores.mean()
+
+"""Mengukur seberapa mirip rata-rata dari 10 rekomendasi teratas terhadap anime referensi, yaitu "Naruto", berdasarkan skor cosine similarity."""
+
+score = average_similarity_score("Naruto", cosine_sim_df, k=10)
+print(f"Rata-rata skor kemiripan untuk rekomendasi 'Naruto' (Top-10): {score}")
+
+"""Precision@k
+
+Precision@k menunjukkan proporsi dari item rekomendasi yang benar-benar relevan (sesuai dengan minat pengguna) dari k item teratas yang direkomendasikan.
+"""
+
+def precision_at_k(recommended, relevant, k=10):
+    recommended_k = recommended[:k]
+    relevant_set = set(relevant)
+    recommended_set = set(recommended_k)
+    true_positives = recommended_set.intersection(relevant_set)
+    return len(true_positives) / k
+
+"""Mengukur kualitas rekomendasi sistem berbasis konten (Content-Based Filtering) dengan metrik Precision@k, menggunakan anime dengan genre yang sama sebagai ground truth (acuan kebenaran). Pada kode ini, ground truth (daftar anime yang dianggap relevan) diambil langsung dari data anime_cleaned berdasarkan genre yang sama dengan anime referensi, yaitu "Gintama"."""
+
+# Ambil genre dari anime referensi (misalnya 'Naruto')
+target_genre = anime_cleaned[anime_cleaned['name'] == 'Gintama']['genre'].values[0]
+
+# Filter anime dengan genre yang sama dan bukan 'Naruto'
+relevant_df = anime_cleaned[
+    (anime_cleaned['genre'] == target_genre) &
+    (anime_cleaned['name'] != 'Gintama')
+]
+
+# Ambil 10 judul sebagai ground truth
+relevant = relevant_df['name'].head(10).tolist()
+
+# Rekomendasi sistem
+recommended_df = anime_recommendations('Gintama')
+recommended = recommended_df['name'].tolist()
+
+# Hitung precision@k
+precision = precision_at_k(recommended, relevant, k=10)
+print("Relevant (Ground Truth):", relevant)
+print("Recommended:", recommended[:5])
+print(f"Precision@5: {precision}")

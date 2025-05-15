@@ -22,30 +22,27 @@ Untuk mengatasi masalah tersebut, dibutuhkan sebuah sistem yang mampu memahami s
 
 1. Bagaimana mengurangi waktu yang dihabiskan pengguna dalam memilih anime yang sesuai dengan preferensi mereka?
 
-   Banyak pengguna merasa kesulitan dan menghabiskan waktu lama untuk menemukan tontonan yang cocok karena banyaknya pilihan dan kurangnya rekomendasi yang personal.
+   Banyak pengguna kesulitan menemukan tontonan yang cocok karena banyaknya pilihan dan tidak adanya sistem rekomendasi yang efisien dan personal.
 
 2. Mengapa sistem rekomendasi yang ada seringkali tidak sesuai dengan selera pengguna?
+  
+   Sistem yang terlalu bergantung pada popularitas atau histori global cenderung mengabaikan karakteristik konten seperti genre dan judul yang penting untuk memahami preferensi individu.
 
-   Sistem rekomendasi seringkali terlalu bergantung pada popularitas atau riwayat global tanpa memahami karakteristik konten seperti genre dan judul.
-
-3. Bagaimana cara memanfaatkan fitur konten anime (judul dan genre) secara optimal dalam membangun sistem rekomendasi yang akurat?
-
-   Tanpa teknik pemrosesan teks dan pengukuran kesamaan yang tepat, fitur-fitur ini belum dimanfaatkan secara maksimal.
+3. Bagaimana memanfaatkan fitur konten anime (judul dan genre) secara optimal untuk membangun sistem rekomendasi yang akurat?
+  
+   Fitur konten seperti judul dan genre belum dimanfaatkan secara maksimal karena kurangnya teknik pemrosesan teks dan pengukuran kemiripan yang tepat.
 
 ### Goals
 
-1. Membangun sistem rekomendasi anime berbasis Content-Based Filtering yang menggunakan judul dan genre sebagai fitur utama.
-2. Memberikan rekomendasi anime yang relevan dan personal berdasarkan kesamaan konten.
-3. Mengurangi waktu pencarian pengguna dalam memilih tontonan.
-4. Membantu pengguna mengeksplorasi anime yang belum populer namun sesuai selera.
-5. Meningkatkan keterlibatan dan kepuasan pengguna terhadap platform.
+1. Mengurangi waktu yang dihabiskan pengguna dalam memilih tontonan dengan menyediakan rekomendasi yang cepat dan relevan.
+2. Memberikan rekomendasi anime yang lebih personal dengan memanfaatkan karakteristik konten seperti genre dan judul.
+3. Membangun sistem rekomendasi berbasis Content-Based Filtering yang mengoptimalkan pemrosesan konten untuk meningkatkan akurasi.
 
 ### Solution statements
 
-1. Mengembangkan pipeline ekstraksi fitur dari kolom title dan genre menggunakan teknik TF-IDF vectorization.
-2. Membangun vektor representasi teks dari setiap anime dan menghitung kemiripan antar-anime menggunakan cosine similarity.
-3. Menyediakan sistem rekomendasi yang mampu memberikan daftar anime serupa berdasarkan judul dan genre input dari pengguna.
-4. Menguji kualitas rekomendasi melalui uji coba dengan pengguna dan validasi subjektif berbasis kesesuaian preferensi.
+1. Mengembangkan pipeline ekstraksi fitur dari kolom judul dan genre menggunakan teknik TF-IDF vectorization agar sistem dapat memahami konten secara kontekstual.
+2. Menghitung kemiripan antar-anime menggunakan cosine similarity berdasarkan representasi vektor dari konten, untuk menghasilkan rekomendasi yang personal.
+3. Mengevaluasi kualitas sistem menggunakan metrik Precision@K dan Cosine Similarity Score Average guna memastikan relevansi dan efektivitas hasil rekomendasi.
 
 ## Data Understanding
 

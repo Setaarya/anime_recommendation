@@ -100,51 +100,52 @@ Dalam proses data preparation yang dilakukan, terdapat beberapa tahapan penting 
    - Alasan: Tipe anime (TV, Movie, OVA, dll.) adalah informasi kategorikal yang esensial dalam segmentasi data. Nilai kosong pada fitur ini akan mengganggu proses klasifikasi atau
      pengelompokan.
 
-4. Menghapus Nilai "Unknown" pada Kolom episodes
-   - Proses: Baris dengan nilai "Unknown" pada kolom episodes dihapus dari dataset.
-   - Alasan: Kolom episodes berisi jumlah episode yang merupakan data numerik. Nilai "Unknown" tidak dapat diproses secara numerik dan dapat mengganggu proses analisis atau pelatihan
-     model prediktif.
-
-5. Menghapus Nilai Kosong (NaN) pada Kolom rating
+4. Menghapus Nilai Kosong (NaN) pada Kolom rating
    - Proses: Baris dengan nilai NaN pada kolom rating dihapus.
    - Alasan: Kolom rating mencerminkan penilaian komunitas terhadap anime dan menjadi indikator penting dalam model rekomendasi. Nilai kosong di kolom ini berarti tidak ada masukan dari
      pengguna dan sebaiknya dihilangkan agar tidak mengganggu analisis statistik.
 
-## Modeling
+5. Menghapus Nilai "Unknown" pada Kolom episodes
+   - Proses: Baris dengan nilai "Unknown" pada kolom episodes dihapus dari dataset.
+   - Alasan: Kolom episodes berisi jumlah episode yang merupakan data numerik. Nilai "Unknown" tidak dapat diproses secara numerik dan dapat mengganggu proses analisis atau pelatihan
+     model prediktif.
 
-Dalam pembuatan sistem content based filtering digunakan TF-IDF sebagai metode untuk merepresentasikan data teks (dalam hal ini genre) ke dalam bentuk vektor numerik dan Cosine Similarity sebagai metode untuk mengukur kemiripan antar vektor genre dari setiap anime.
+6. Melakukan Reset Index Setelah Pembersihan Data
+   - Proses: Mengatur ulang index pada DataFrame setelah proses penghapusan baris dengan nilai kosong atau tidak valid menggunakan reset_index(drop=True).
+   - Alasan: Setelah baris-baris tertentu dihapus, index pada DataFrame menjadi tidak berurutan. Reset index dilakukan untuk memastikan index kembali konsisten dan rapi, sehingga
+     mempermudah proses analisis dan manipulasi data selanjutnya.
 
-### TF-IDF
-TF-IDF (Term Frequency-Inverse Document Frequency) adalah metode statistik yang mengevaluasi pentingnya suatu kata dalam dokumen relatif terhadap kumpulan dokumen. Dalam konteks sistem rekomendasi anime, dokumen adalah genre anime dan kata-kata adalah komponen genre individu.
-
-- Cara kerja TF-IDF:
-  
-   1). Term Frequency (TF): Menghitung frekuensi kemunculan sebuah kata dalam dokumen. Semakin sering kata muncul dalam dokumen, semakin tinggi nilai TF-nya.
+7. Menggunakan Teknik TF-IDF pada Kolom Title dan Genre
+   - Proses: Menerapkan metode TF-IDF (Term Frequency-Inverse Document Frequency) pada kolom title dan genre untuk mengubah teks menjadi representasi numerik vektor.
+   - Alasan: Teknik ini digunakan untuk menangkap kata-kata penting yang mencerminkan karakteristik unik dari setiap anime berdasarkan judul dan genre-nya. Dengan representasi vektor
+     ini, sistem dapat mengukur tingkat kemiripan antar-anime berdasarkan konten yang dimiliki.
+   - Cara kerja TF-IDF:
+     1). Term Frequency (TF): Menghitung frekuensi kemunculan sebuah kata dalam dokumen. Semakin sering kata muncul dalam dokumen, semakin tinggi nilai TF-nya.
    
       `TF(t, d) = (Jumlah kemunculan term t dalam dokumen d) / (Total term dalam dokumen d)`
       
-   2). Inverse Document Frequency (IDF): Mengukur seberapa penting sebuah kata dengan mempertimbangkan kejarangannya di seluruh koleksi dokumen. Kata yang jarang muncul di banyak dokumen akan memiliki nilai IDF tinggi.
+      2). Inverse Document Frequency (IDF): Mengukur seberapa penting sebuah kata dengan mempertimbangkan kejarangannya di seluruh koleksi dokumen. Kata yang jarang muncul di banyak
+     dokumen akan memiliki nilai IDF tinggi.
    
       `IDF(t) = log_e(Total dokumen / Jumlah dokumen yang mengandung term t)`
      
-   3). TF-IDF: Hasil perkalian dari TF dan IDF, memberikan nilai yang tinggi pada kata yang sering muncul dalam dokumen tertentu tetapi jarang dalam koleksi dokumen.
+      3). TF-IDF: Hasil perkalian dari TF dan IDF, memberikan nilai yang tinggi pada kata yang sering muncul dalam dokumen tertentu tetapi jarang dalam koleksi dokumen.
    
       `TF-IDF(t, d) = TF(t, d) × IDF(t)`
-      
-- Kelebihan TF-IDF:
-   - Mampu menangkap informasi yang penting dan spesifik dalam sebuah dokumen
-   - Mengurangi pengaruh kata-kata umum yang tidak memberi nilai informasi tinggi
-   - Relatif sederhana dan efisien dalam komputasi
-   - Mudah diimplementasikan dan intuitif untuk dipahami
 
-- Kekurangan TF-IDF:
-   - Tidak memperhitungkan semantik atau konteks kata
-   - Tidak mempertimbangkan urutan kata dalam dokumen
-   - Rentan terhadap masalah dimensionalitas tinggi pada dataset besar
-   - Tidak dapat menangkap hubungan antar kata (misalnya sinonim)
+## Modeling
 
 ### Cosine Similarity
-Cosine Similarity adalah metode pengukuran kemiripan berbasis sudut antara dua vektor. Cosine Similarity mengukur kemiripan dua vektor dengan menghitung kosinus sudut di antara keduanya. Nilai cosine similarity berkisar antara -1 hingga 1, di mana 1 berarti vektor identik, 0 berarti tidak berkorelasi, dan -1 berarti berlawanan arah.
+
+Dalam sistem rekomendasi berbasis content-based filtering, Cosine Similarity digunakan sebagai metode utama untuk mengukur tingkat kemiripan antar anime berdasarkan vektor fitur konten, seperti genre dan judul yang telah direpresentasikan menggunakan TF-IDF.
+
+- Cosine Similarity adalah metode pengukuran kemiripan antara dua vektor berdasarkan sudut di antaranya. Metode ini menghasilkan nilai antara -1 hingga 1, di mana:
+
+  1). 1 menandakan vektor identik (kemiripan sempurna),
+  
+  2). 0 menandakan tidak ada hubungan (orthogonal),
+
+  3). 1 menandakan arah berlawanan.
 
 - Cara kerja Cosine Similarity:
 
